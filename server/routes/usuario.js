@@ -4,12 +4,39 @@ const _ = require('underscore');
 const Impresora = require('../models/impresora');
 const app = express();
 
+//POST
+app.post('/impresora', (req, res) => {
+
+    let body = req.body
+    let impresora = new Impresora({
+        marca: body.marca,
+        modelo: body.modelo,
+        n_serie: body.n_serie,
+        color: body.color,
+        ip: body.ip,
+        n_contador: body.n_contador,
+        precio: body.precio
+    });
+    impresora.save((err, impresoraDB) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            impresora: impresoraDB
+        });
+    });
+});
+
+//GET
 app.get('/impresora', (req, res) => {
 
     let desde = req.query.desde || 0;
     desde = Number(desde)
-
-    let limite = req.query.limite || 5;
+    let limite = req.query.limite || 3;
     limite = Number(limite)
 
     Impresora.find()
@@ -34,36 +61,7 @@ app.get('/impresora', (req, res) => {
         })
 });
 
-app.post('/impresora', (req, res) => {
-
-    let body = req.body
-
-    let impresora = new Impresora({
-        marca: body.marca,
-        modelo: body.modelo,
-        n_serie: body.n_serie,
-        color: body.color,
-        ip: body.ip,
-        n_contador: body.n_contador,
-        precio: body.precio
-
-    });
-
-    impresora.save((err, impresoraDB) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-
-        res.json({
-            ok: true,
-            impresora: impresoraDB
-        });
-    });
-});
-
+//PUT
 app.put('/impresora/:id', (req, res) => {
     let id = req.params.id;
     let body = _.pick(req.body, ["modelo", "color", "ip", "precio"]);
@@ -83,6 +81,7 @@ app.put('/impresora/:id', (req, res) => {
     });
 });
 
+//DELETE
 app.delete('/impresora/:id', (req, res) => {
 
     let id = req.params.id;
