@@ -1,14 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
-const Impresora = require('../models/impresora');
+const Usuario = require('../models/impresora');
 const app = express();
 
 //POST
 app.post('/impresora', (req, res) => {
 
     let body = req.body
-    let impresora = new Impresora({
+    let impresora = new Usuario({
         marca: body.marca,
         modelo: body.modelo,
         n_serie: body.n_serie,
@@ -39,7 +39,7 @@ app.get('/impresora', (req, res) => {
     let limite = req.query.limite || 3;
     limite = Number(limite)
 
-    Impresora.find()
+    Usuario.find()
         .skip(desde)
         .limit(limite)
         .exec((err, impresoras) => {
@@ -51,7 +51,7 @@ app.get('/impresora', (req, res) => {
                 });
             }
 
-            Impresora.count((err, conteo) => {
+            Usuario.count((err, conteo) => {
                 res.json({
                     ok: true,
                     impresoras,
@@ -66,7 +66,7 @@ app.put('/impresora/:id', (req, res) => {
     let id = req.params.id;
     let body = _.pick(req.body, ["modelo", "color", "ip", "precio"]);
 
-    Impresora.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' }, (err, impresoraBD) => {
+    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' }, (err, impresoraBD) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -87,7 +87,7 @@ app.delete('/impresora/:id', (req, res) => {
     let id = req.params.id;
 
 
-    Impresora.findByIdAndDelete(id, (err, impresoraBD) => {
+    Usuario.findByIdAndDelete(id, (err, impresoraBD) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
